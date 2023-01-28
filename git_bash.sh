@@ -11,7 +11,7 @@ BLUE="\[\033[1;34m\]"
 PURPLE="\[\033[0;35m\]"
 LIGHT_RED="\[\033[1;31m\]"
 LIGHT_GREEN="\[\033[1;32m\]"
-WHITE="\[\033[1;37m\]"
+# WHITE="\[\033[1;37m\]"
 LIGHT_GRAY="\[\033[0;37m\]"
 COLOR_NONE="\[\e[0m\]"
 
@@ -81,6 +81,17 @@ function get_origin_dist {
     fi
 }
 
+# ? Get count of current running paused jobs.
+function get_jobs_count() {
+    local JOBS=$(jobs 2>/dev/null)
+    local JOBS_COUNT=$(echo "$JOBS" | grep 'Stopped' | wc -l)
+    if [ $JOBS_COUNT != 0 ]; then
+        echo -en "${WHITE} $JOBS_COUNT ${COLOR_NONE_2}"
+    else
+        echo ""
+    fi
+}
+
 # ? Return the prompt symbol to use, colorized based on the return value of the previous command.
 function set_prompt_symbol() {
     # if test $1 -eq 0 ; then
@@ -101,13 +112,14 @@ __PS1_SET_VENV='`get_virtualenv` '                       # Get Python env active
 __PS1_USER='${LIGHT_BLUE} \u '                           # Username
 __PS1_LOCATION='${LIGHT_ORANGE} \w '                     # Working dir path
 __PS1_GIT_BRANCH='${PINK}`__git_ps1`${COLOR_NONE_3}'     # Git branch name
-__PS1_GIT_STATS=' `get_git_stats` '                       # Call function, get git status Add, Modify, Delete
+__PS1_GIT_STATS=' `get_git_stats` '                      # Call function, get git status Add, Modify, Delete
 __PS1_GIT_DIST='`get_origin_dist`'                       # Call function, get ahead or behind status
 __PS1_AFTER='${COLOR_NONE_3}\n\n'                        # No color set
+__PS1_JOBS='`get_jobs_count` '
 
 # __PS1="${__PS1_BEFORE}${__PS1_TIME}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}"
 
-export PS1="${__PS1_BEFORE}${__PS1_SET_VENV}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}$(set_prompt_symbol $?) "
+export PS1="${__PS1_BEFORE}${__PS1_SET_VENV}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}${__PS1_JOBS}$(set_prompt_symbol $?) "
 
 
 
