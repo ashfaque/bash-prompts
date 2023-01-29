@@ -3,39 +3,25 @@
 #*####################################################*#
 
 # ? The various escape codes, we can use to color our prompt.
-RED="\[\033[0;31m\]"
-BRIGHT_RED="\[\e[97;101m\]"
-YELLOW="\[\033[1;33m\]"
-GREEN="\[\033[0;32m\]"
-BLUE="\[\033[1;34m\]"
-PURPLE="\[\033[0;35m\]"
-LIGHT_RED="\[\033[1;31m\]"
-LIGHT_GREEN="\[\033[1;32m\]"
-# WHITE="\[\033[1;37m\]"
-LIGHT_GRAY="\[\033[0;37m\]"
-COLOR_NONE="\[\e[0m\]"
+RED="\[\033[0;31m\]";              BLUE="\[\033[1;34m\]";           GREEN="\[\033[0;32m\]";
+LIGHT_RED="\[\e[1;31m\]";          LIGHT_GREEN="\[\e[1;32m\]";      WHITE="\e[1;7m";
+YELLOW="\[\033[1;33m\]";           PURPLE="\[\033[0;35m\]";         LIGHT_GRAY="\[\033[0;37m\]"
+MEHNDI="\e[42m";                   TOMATO="\e[101m";                LIGHT_YELLOW="\e[30;103m"
+BRIGHT_RED="\[\e[97;101m\]";       LIGHT_BLUE=$(echo -e "\e[97;104m")
+PINK=$(echo -e "\e[97;45m");       LIGHT_ORANGE=$(echo -e "\e[30;43m")
+COLOR_NONE="\[\e[0m\]";            COLOR_NONE_2="\e[0m";            COLOR_NONE_3=$(echo -e "\e[0m")
+# LIGHT_RED="\[\033[1;31m\]";      LIGHT_GREEN="\[\033[1;32m\]";    WHITE="\[\033[1;37m\]"
 
-MEHNDI="\e[42m"
-TOMATO="\e[101m"
-LIGHT_YELLOW="\e[30;103m"
-WHITE="\e[1;7m"
-LIGHT_BLUE=$(echo -e "\e[97;104m")
-LIGHT_ORANGE=$(echo -e "\e[30;43m")
-PINK=$(echo -e "\e[97;45m")
-COLOR_NONE_2="\e[0m"
-COLOR_NONE_3=$(echo -e "\e[0m")
 
 # ? Determine active Python virtualenv details.
 function get_virtualenv() {
     if test -z "$VIRTUAL_ENV"; then    # $VIRTUAL_ENV is an environment variable.
-        # PYTHON_VIRTUALENV=""
         echo ""
     else
         echo -e ${TOMATO}[$( (basename ${VIRTUAL_ENV}))]${COLOR_NONE_2}
-        # PYTHON_VIRTUALENV=${BRIGHT_RED}[`(basename ${VIRTUAL_ENV})`]${COLOR_NONE}" "
-        # PYTHON_VIRTUALENV="\[\e[97;101m\][`(basename \"$VIRTUAL_ENV\")`]${COLOR_NONE} "
     fi
 }
+
 
 # ? Show Untracked Deleted & Modified files.
 get_git_stats() {
@@ -60,6 +46,7 @@ get_git_stats() {
     echo -e "${COLOR_NONE_2}${STATS}${COLOR_NONE_2}"
 }
 
+
 # ? Show commits in bash prompt.
 function get_origin_dist {
     local STATUS="$(git status 2>/dev/null)"
@@ -81,6 +68,7 @@ function get_origin_dist {
     fi
 }
 
+
 # ? Get count of current running paused jobs.
 function get_jobs_count() {
     local JOBS=$(jobs 2>/dev/null)
@@ -92,19 +80,20 @@ function get_jobs_count() {
     fi
 }
 
+
 # ? Return the prompt symbol to use, colorized based on the return value of the previous command.
 function set_prompt_symbol() {
-    # if test $1 -eq 0 ; then
-    if [ $1 = 0 ]; then
-        echo -en "${LIGHT_GREEN}\$${COLOR_NONE}"
-        # echo "\[\033[1;32m\]\$\[\e[0m\]"    # Green
-        # PROMPT_SYMBOL="${LIGHT_GREEN}\$${COLOR_NONE}"
+    local STATUS="$?"
+    local STATUS_COLOR=""
+    if [ $STATUS != 0 ]; then
+        STATUS_COLOR=$LIGHT_RED
     else
-        echo -en "${LIGHT_RED}\$${COLOR_NONE}"
-        # echo "\[\033[1;31m\]\$\[\e[0m\]"    # Red
-        # PROMPT_SYMBOL="${LIGHT_RED}\$${COLOR_NONE}"
+        STATUS_COLOR=$LIGHT_GREEN
     fi
+    # export PS1="${__PS1}${STATUS_COLOR}λ${COLOR_NONE} "    # λ
+    export PS1="${__PS1}${STATUS_COLOR}\$${COLOR_NONE} "    # $
 }
+
 
 # ? Setting Variables and calling funcitons.
 __PS1_BEFORE='\n'                                        # New line character
@@ -117,12 +106,8 @@ __PS1_GIT_DIST='`get_origin_dist`'                       # Call function, get ah
 __PS1_AFTER='${COLOR_NONE_3}\n\n'                        # No color set
 __PS1_JOBS='`get_jobs_count` '
 
-# __PS1="${__PS1_BEFORE}${__PS1_TIME}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}"
-
-export PS1="${__PS1_BEFORE}${__PS1_SET_VENV}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}${__PS1_JOBS}$(set_prompt_symbol $?) "
+__PS1="${__PS1_BEFORE}${__PS1_SET_VENV}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}${__PS1_JOBS}"
 
 
-
-# Test
-# __PS1_SET_PROMPT='\[\033[1;$(($?==0?32:31))m\]$ ${COLOR_NONE_3}'
-# export PS1="${__PS1_BEFORE}${__PS1_SET_VENV}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}${__PS1_SET_PROMPT} "
+export GIT_PS1_SHOWDIRTYSTATE=1    # Shows a `*` beside branch name, if something modified in the git repo.
+export PROMPT_COMMAND=set_prompt_symbol    # Calling function which actually exports PS1. PROMPT_COMMAND is an env variable which runs just before prompt is shown.
