@@ -3,12 +3,12 @@
 #*####################################################*#
 
 # ? The various escape codes, we can use to color our prompt.
-RED="\[\033[0;31m\]";              BLUE="\[\033[1;34m\]";           GREEN="\[\033[0;32m\]";
-LIGHT_RED="\[\e[1;31m\]";          LIGHT_GREEN="\[\e[1;32m\]";      WHITE="\e[1;7m";
+RED="\[\033[0;31m\]";              BLUE="\[\033[1;34m\]";           GREEN="\[\033[0;32m\]"
+LIGHT_RED="\[\e[1;31m\]";          LIGHT_GREEN="\[\e[1;32m\]";      WHITE="\e[1;7m"
 YELLOW="\[\033[1;33m\]";           PURPLE="\[\033[0;35m\]";         LIGHT_GRAY="\[\033[0;37m\]"
 MEHNDI="\e[42m";                   TOMATO="\e[101m";                LIGHT_YELLOW="\e[30;103m"
-BRIGHT_RED="\[\e[97;101m\]";       LIGHT_BLUE=$(echo -e "\e[97;104m")
-PINK=$(echo -e "\e[97;45m");       LIGHT_ORANGE=$(echo -e "\e[30;43m")
+PINK=$(echo -e "\e[97;45m");       LIGHT_BLUE=$(echo -e "\e[97;104m")
+ORANGE=$(echo -e "\e[30;43m");     BRIGHT_RED=$(echo -e "\e[97;101m")
 COLOR_NONE="\[\e[0m\]";            COLOR_NONE_2="\e[0m";            COLOR_NONE_3=$(echo -e "\e[0m")
 # LIGHT_RED="\[\033[1;31m\]";      LIGHT_GREEN="\[\033[1;32m\]";    WHITE="\[\033[1;37m\]"
 
@@ -19,6 +19,16 @@ function get_virtualenv() {
         echo ""
     else
         echo -e ${TOMATO}[$( (basename ${VIRTUAL_ENV}))]${COLOR_NONE_2}
+    fi
+}
+
+
+# ? If root user then red, else it will be blue.
+function get_user_bg_color() {
+    if [[ "${EUID}" -eq 0 ]]; then
+        USER_BG_COLOR=$BRIGHT_RED
+    else
+        USER_BG_COLOR=$LIGHT_BLUE
     fi
 }
 
@@ -96,10 +106,11 @@ function set_prompt_symbol() {
 
 
 # ? Setting Variables and calling funcitons.
+get_user_bg_color                                        # Calling the function
 __PS1_BEFORE='\n'                                        # New line character
 __PS1_SET_VENV='`get_virtualenv` '                       # Get Python env active-inactive status
-__PS1_USER='${LIGHT_BLUE} \u '                           # Username
-__PS1_LOCATION='${LIGHT_ORANGE} \w '                     # Working dir path
+__PS1_USER='${USER_BG_COLOR} \u '                        # Username
+__PS1_LOCATION='${ORANGE} \w '                           # Working dir path
 __PS1_GIT_BRANCH='${PINK}`__git_ps1`${COLOR_NONE_3}'     # Git branch name
 __PS1_GIT_STATS=' `get_git_stats` '                      # Call function, get git status Add, Modify, Delete
 __PS1_GIT_DIST='`get_origin_dist`'                       # Call function, get ahead or behind status
@@ -109,5 +120,5 @@ __PS1_JOBS='`get_jobs_count` '
 __PS1="${__PS1_BEFORE}${__PS1_SET_VENV}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}${__PS1_JOBS}"
 
 
-export GIT_PS1_SHOWDIRTYSTATE=1    # Shows a `*` beside branch name, if something modified in the git repo.
+export GIT_PS1_SHOWDIRTYSTATE=1            # Shows a `*` beside branch name, if something modified in the git repo.
 export PROMPT_COMMAND=set_prompt_symbol    # Calling function which actually exports PS1. PROMPT_COMMAND is an env variable which runs just before prompt is shown.
