@@ -2,15 +2,17 @@
 #*######### Colored Bash Prompt for Git Bash #########*#
 #*####################################################*#
 
+# ? https://stackoverflow.com/a/28938235/16377463
 # ? The various escape codes, we can use to color our prompt.
-RED="\[\033[0;31m\]";              BLUE="\[\033[1;34m\]";           GREEN="\[\033[0;32m\]"
+RED="\[\033[0;31m\]";              BLUE="\[\033[0;34m\]";           GREEN="\[\033[0;32m\]"
 LIGHT_RED="\[\e[1;31m\]";          LIGHT_GREEN="\[\e[1;32m\]";      WHITE="\e[1;7m"
-YELLOW="\[\033[1;33m\]";           PURPLE="\[\033[0;35m\]";         LIGHT_GRAY="\[\033[0;37m\]"
+BROWN="\[\033[0;33m\]";            PURPLE="\[\033[0;35m\]";         LIGHT_PURPLE="\[\033[1;35m\]"
 MEHNDI="\e[42m";                   TOMATO="\e[101m";                LIGHT_YELLOW="\e[30;103m"
+BLACK="\[\033[0;33m\]";            DARK_GRAY="\[\033[1;30m\]";      LIGHT_GRAY="\[\033[0;37m\]"
+YELLOW="\[\033[1;33m\]";           L_BLUE="\[\033[1;34m\]";         O_WHITE="\[\033[1;37m\]"
 PINK=$(echo -e "\e[97;45m");       LIGHT_BLUE=$(echo -e "\e[97;104m")
 ORANGE=$(echo -e "\e[30;43m");     BRIGHT_RED=$(echo -e "\e[97;101m")
 COLOR_NONE="\[\e[0m\]";            COLOR_NONE_2="\e[0m";            COLOR_NONE_3=$(echo -e "\e[0m")
-# LIGHT_RED="\[\033[1;31m\]";      LIGHT_GREEN="\[\033[1;32m\]";    WHITE="\[\033[1;37m\]"
 
 
 # ? Determine active Python virtualenv details.
