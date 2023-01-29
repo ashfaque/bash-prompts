@@ -7,6 +7,7 @@
   - Untracked files - Green
   - Deleted files - Red
   - Modified files - Orange
+  - Behind or ahead status with remote
 - Number of background jobs running if any - White
 - Colored $ prompt, indicating success status of previous command
 - Different bg color for root user
