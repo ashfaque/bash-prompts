@@ -91,6 +91,16 @@ function get_jobs_count() {
 }
 
 
+# ? Get PWD lock status, if current user has write permission or not.
+function get_dir_lock_status() {
+    if [[ ! -w $PWD ]]; then
+        echo '🔒 '
+        # echo 'LOCKED'
+    fi
+    
+}
+
+
 # ? Return the prompt symbol to use, colorized based on the return value of the previous command.
 function set_prompt_symbol() {
     local STATUS="$?"
@@ -106,7 +116,7 @@ function set_prompt_symbol() {
 
 
 # ? Setting Variables and calling funcitons.
-get_user_bg_color                                        # Calling the function
+get_user_bg_color                                        # Calling the function, which sets variable $USER_BG_COLOR
 __PS1_BEFORE='\n'                                        # New line character
 __PS1_SET_VENV='`get_virtualenv` '                       # Get Python env active-inactive status
 __PS1_USER='${USER_BG_COLOR} \u '                        # Username
@@ -115,9 +125,10 @@ __PS1_GIT_BRANCH='${PINK}`__git_ps1`${COLOR_NONE_3}'     # Git branch name
 __PS1_GIT_STATS=' `get_git_stats` '                      # Call function, get git status Add, Modify, Delete
 __PS1_GIT_DIST='`get_origin_dist`'                       # Call function, get ahead or behind status
 __PS1_AFTER='${COLOR_NONE_3}\n\n'                        # No color set
-__PS1_JOBS='`get_jobs_count` '
+__PS1_JOBS='`get_jobs_count` '                           # The whitespace here is for maintaining symmetry of jobs count. And shouldn't be mistaken for last whitespace.
+__PS1_DIR_LOCK_STATUS='`get_dir_lock_status`'            # Show 🔒 ASCII character (U+1F512) if user has no write access to PWD.
 
-__PS1="${__PS1_BEFORE}${__PS1_SET_VENV}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}${__PS1_JOBS}"
+__PS1="${__PS1_BEFORE}${__PS1_SET_VENV}${__PS1_USER}${__PS1_LOCATION}${__PS1_GIT_BRANCH}${__PS1_GIT_STATS}${__PS1_GIT_DIST}${__PS1_AFTER}${__PS1_JOBS}${__PS1_DIR_LOCK_STATUS}"
 
 
 export GIT_PS1_SHOWDIRTYSTATE=1            # Shows a `*` beside branch name, if something modified in the git repo.
