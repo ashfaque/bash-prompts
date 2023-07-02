@@ -26,11 +26,21 @@ PROMPT_COLOR=$LIGHT_GREEN
 
 
 # ? Determine active Python virtualenv details.
+# function get_virtualenv() {
+#     if test -z "$VIRTUAL_ENV"; then    # $VIRTUAL_ENV is an environment variable.
+#         echo ""
+#     else
+#         echo -e ${PY_ENV_BG}[$( (basename ${VIRTUAL_ENV}))]${COLOR_NONE_2}
+#     fi
+# }
+
 function get_virtualenv() {
-    if test -z "$VIRTUAL_ENV"; then    # $VIRTUAL_ENV is an environment variable.
-        echo ""
-    else
+    if [ -n "$CONDA_DEFAULT_ENV" ]; then    # $CONDA_DEFAULT_ENV is an environment variable.
+        echo -e ${PY_ENV_BG}ℂ [$( (basename ${CONDA_DEFAULT_ENV}))]${COLOR_NONE_2}
+    elif [ -n "$VIRTUAL_ENV" ]; then    # $VIRTUAL_ENV is an environment variable.
         echo -e ${PY_ENV_BG}[$( (basename ${VIRTUAL_ENV}))]${COLOR_NONE_2}
+    else
+        echo ""
     fi
 }
 
